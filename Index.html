@@ -1,0 +1,2115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Python e Inteligencia Artificial – Guía práctica inicial</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- FUENTES -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;600;700&family=Pacifico&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --bg-main: #050011;
+      --accent: #38bdf8;
+      --accent-strong: #0ea5e9;
+      --accent-pink: #ff4bd8;
+      --accent-purple: #a855f7;
+      --accent-lime: #bef264;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --text-soft: #a5b4fc;
+      --danger: #fb7185;
+      --radius-xl: 1.6rem;
+      --radius-lg: 1rem;
+      --radius-pill: 999px;
+      --shadow-neon: 0 0 20px rgba(56, 189, 248, 0.4),
+                     0 0 40px rgba(168, 85, 247, 0.35);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Rajdhani", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(15, 23, 42, 0.7), rgba(3, 4, 12, 0.9), rgba(0, 0, 0, 0.95)),
+        url("IA-2.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-main);
+      line-height: 1.8;
+      min-height: 100vh;
+      cursor: none; /* usamos cursor personalizado */
+      scrollbar-width: none;
+    }
+    body::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 5.5rem 1.2rem 3rem;
+    }
+
+    @media (min-width: 768px) {
+      .page {
+        padding: 6rem 1.6rem 4rem;
+      }
+    }
+
+    /* NAV SUPERIOR FIJA */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56,189,248,0.32), transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(244,114,182,0.32), transparent 55%),
+        linear-gradient(
+          120deg,
+          rgba(15,23,42,0.98),
+          rgba(2,6,23,0.98)
+        );
+      background-blend-mode: screen, normal;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.6);
+      box-shadow:
+        0 0 22px rgba(56, 189, 248, 0.65),
+        0 0 32px rgba(168, 85, 247, 0.55),
+        0 14px 35px rgba(0, 0, 0, 0.9);
+      z-index: 50;
+      backdrop-filter: blur(18px) saturate(140%);
+    }
+
+    .nav-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.05rem;
+      line-height: 1.1;
+    }
+
+    .nav-brand-title {
+      font-family: "Pacifico", cursive;
+      font-size: 1.3rem;
+      color: var(--accent);
+      text-shadow:
+        1px 1px 0px #000,
+        -1px -1px 0px #000,
+        0 0 18px rgba(56, 189, 248, 0.9);
+    }
+
+    .nav-brand-sub {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .nav-brand-silvana {
+      font-size: 0.7rem;
+      color: var(--accent-pink);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      position: relative;
+      padding-bottom: 0.15rem;
+      text-shadow: 1px 1px 0 #000;
+      font-weight: 700;
+      cursor: none;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--accent), var(--accent-pink));
+      transition: width 0.2s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    @media (max-width: 720px) {
+      .nav-links {
+        gap: 0.7rem;
+        font-size: 0.75rem;
+      }
+      .nav-brand-title {
+        font-size: 1rem;
+      }
+      .nav-brand-sub,
+      .nav-brand-silvana {
+        display: none;
+      }
+    }
+
+    /* Compensar barra fija al usar anclas */
+    [id] {
+      scroll-margin-top: 80px;
+    }
+
+    h1, h2, h3 {
+      font-family: "Orbitron", system-ui, sans-serif;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    h1, h2 {
+      text-shadow:
+        2px 2px 0 #000,
+        -2px -2px 0 #000,
+        0 0 20px rgba(56, 189, 248, 0.7);
+    }
+
+    h3 {
+      text-shadow:
+        1px 1px 0 #000,
+        0 0 10px rgba(168, 85, 247, 0.7);
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 4.5vw, 3.1rem);
+      color: var(--accent);
+      margin-bottom: 0.7rem;
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 3vw, 2.2rem);
+      color: var(--accent-purple);
+      margin-bottom: 0.4rem;
+    }
+
+    h3 {
+      font-size: 1.35rem;
+      color: var(--accent-pink);
+      margin-bottom: 0.35rem;
+    }
+
+    p, li {
+      font-size: 1.06rem;
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    strong {
+      color: var(--accent-strong);
+      font-weight: 700;
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    em {
+      font-style: italic;
+      color: var(--accent-pink);
+    }
+
+    .script {
+      font-family: "Pacifico", cursive;
+      letter-spacing: 0.04em;
+      text-shadow:
+        1px 1px 0 #000,
+        0 0 16px rgba(236, 72, 153, 0.8);
+    }
+
+    /* PANEL HOVER (zoom + neon interno + transparencia) */
+
+    .hover-panel {
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      box-shadow:
+        0 0 16px rgba(15, 23, 42, 0.9),
+        inset 0 0 18px rgba(15, 23, 42, 0.9);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.62), rgba(3,7,18,0.62));
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+    }
+
+    .hover-panel:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow:
+        0 0 24px rgba(56, 189, 248, 0.9),
+        0 0 36px rgba(168, 85, 247, 0.75),
+        inset 0 0 22px rgba(56, 189, 248, 0.35);
+      border-color: rgba(56, 189, 248, 0.9) !important;
+    }
+
+    /* HERO */
+
+    .hero {
+      margin-bottom: 2.2rem;
+      display: grid;
+      gap: 1.6rem;
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 3.1fr) minmax(0, 2.4fr);
+        align-items: center;
+      }
+    }
+
+    .hero-left {
+      border-radius: var(--radius-xl);
+      padding: 1.6rem 1.8rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.35rem 0.9rem 0.35rem 0.3rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      background: linear-gradient(
+        to right,
+        rgba(56, 189, 248, 0.25),
+        rgba(168, 85, 247, 0.16),
+        rgba(15, 23, 42, 0.9)
+      );
+      backdrop-filter: blur(14px);
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-badge-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #f9fafb, #38bdf8 55%, #0f172a);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.9);
+    }
+
+    .hero-badge-text {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-lime);
+      font-weight: 600;
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    .for-silvana {
+      font-size: 0.8rem;
+      color: var(--accent-pink);
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-shadow:
+        1px 1px 0 #000,
+        0 0 10px rgba(236, 72, 153, 0.8);
+    }
+
+    .hero-subtitle {
+      color: var(--text-soft);
+      font-size: 1.02rem;
+      max-width: 38rem;
+    }
+
+    .hero-subtitle em {
+      font-size: 1.06rem;
+    }
+
+    .hero-highlights {
+      margin-top: 1.2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .pill {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 0.4rem 1.1rem;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: radial-gradient(circle at top left, rgba(2,6,23,0.8), rgba(15,23,42,0.8));
+      color: var(--text-muted);
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent-strong);
+    }
+
+    .hero-right {
+      border-radius: var(--radius-xl);
+      padding: 1.4rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-right::before {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(
+        circle,
+        rgba(56, 189, 248, 0.22),
+        rgba(168, 85, 247, 0.02),
+        transparent 65%
+      );
+      top: -90px;
+      right: -100px;
+      opacity: 0.85;
+    }
+
+    .hero-right-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-card-chip {
+      display: inline-flex;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.8rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    .hero-card-body p {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+    }
+
+    .hero-card-body p + p {
+      margin-top: 0.45rem;
+    }
+
+    .hero-card-list {
+      margin-top: 0.65rem;
+      padding-left: 1.1rem;
+      font-size: 0.96rem;
+      list-style: disc;
+    }
+
+    /* SECCIONES */
+
+    .section {
+      margin-top: 2.7rem;
+    }
+
+    .section-header {
+      margin-bottom: 1.4rem;
+    }
+
+    .section-kicker {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent-lime);
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    .section-description {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 42rem;
+    }
+
+    /* GRID IA */
+
+    .grid-2 {
+      display: grid;
+      gap: 1.4rem;
+    }
+
+    @media (min-width: 900px) {
+      .grid-2 {
+        grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+      }
+    }
+
+    .card {
+      border-radius: var(--radius-xl);
+      padding: 1.5rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at top left,
+        rgba(168, 85, 247, 0.2),
+        transparent 60%
+      );
+      pointer-events: none;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-content h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .card-content p {
+      font-size: 1rem;
+    }
+
+    .card-content p + p {
+      margin-top: 0.5rem;
+    }
+
+    .note {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      border-left: 2px solid rgba(148, 163, 184, 0.7);
+      padding-left: 0.7rem;
+      font-style: italic;
+    }
+
+    .checklist {
+      border-radius: var(--radius-xl);
+      padding: 1.3rem 1.4rem 2.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .checklist-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      color: var(--text-main);
+    }
+
+    .checklist-list {
+      margin-top: 0.2rem;
+      padding-left: 1.1rem;
+      list-style: disc;
+      font-size: 0.98rem;
+    }
+
+    .checklist-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    .checklist-illustration {
+      position: absolute;
+      right: 0.4rem;
+      bottom: 0.3rem;
+      width: 130px;
+      opacity: 0.95;
+      filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.8));
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .checklist-illustration {
+        display: none;
+      }
+    }
+
+    .shock-box {
+      margin-top: 0.8rem;
+      padding: 1rem 1.1rem;
+      border-radius: 0.9rem;
+      border-left: 3px solid var(--accent-pink);
+      background: radial-gradient(circle at left, rgba(255, 75, 216, 0.32), transparent 60%);
+      box-shadow: 0 0 20px rgba(255, 75, 216, 0.4);
+      font-size: 1rem;
+    }
+
+    .shock-box strong {
+      color: var(--accent-strong);
+    }
+
+    /* PASOS / ACORDEONES */
+
+    .steps {
+      margin-top: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    details.step {
+      border-radius: var(--radius-lg);
+      padding: 0.7rem 1rem;
+      box-shadow:
+        0 14px 35px rgba(15, 23, 42, 0.95),
+        inset 0 0 18px rgba(15, 23, 42, 0.9);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+      background-color: rgba(3, 7, 18, 0.7);
+      background-image: url("7SYH.gif");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-blend-mode: multiply;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(31, 41, 55, 0.95);
+    }
+
+    details.step[open] {
+      border-color: var(--accent-purple);
+      box-shadow:
+        0 0 24px rgba(56, 189, 248, 0.9),
+        0 0 36px rgba(168, 85, 247, 0.75),
+        inset 0 0 22px rgba(56, 189, 248, 0.4);
+      transform: translateY(-1px);
+    }
+
+    summary.step-header {
+      list-style: none;
+      cursor: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .step-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .step-number {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top, #0ea5e9, #6d28d9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #e5f2ff;
+    }
+
+    .step-title {
+      font-size: 1.03rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .step-toggle {
+      font-size: 1.1rem;
+      color: var(--accent);
+      transition: transform 0.15s ease;
+    }
+
+    details[open] .step-toggle {
+      transform: rotate(90deg);
+    }
+
+    .step-body {
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid rgba(31, 41, 55, 0.95);
+      font-size: 0.98rem;
+      color: var(--text-main);
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    .step-body p + p {
+      margin-top: 0.45rem;
+    }
+
+    .step-list {
+      margin-top: 0.45rem;
+      padding-left: 1.1rem;
+      font-size: 0.96rem;
+    }
+
+    .code {
+      margin-top: 0.6rem;
+      background: rgba(2, 6, 23, 0.9);
+      border-radius: 0.75rem;
+      padding: 0.8rem 0.9rem;
+      font-family: "Courier New", ui-monospace, SFMono-Regular, Menlo, Monaco,
+        Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9rem;
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      color: #e5e7eb;
+      overflow-x: auto;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.45);
+    }
+
+    .code span.accent {
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
+
+    .tag {
+      font-size: 0.82rem;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.12rem 0.7rem;
+      border-radius: var(--radius-pill);
+      background: rgba(37, 99, 235, 0.5);
+      border: 1px solid rgba(129, 140, 248, 0.8);
+      color: #e0e7ff;
+      margin-bottom: 0.45rem;
+    }
+
+    /* CONFIDENCIALIDAD – CARD FLIP */
+
+    .two-cols {
+      margin-top: 1.9rem;
+      display: grid;
+      gap: 1.3rem;
+    }
+
+    @media (min-width: 850px) {
+      .two-cols {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      }
+    }
+
+    .flip-card {
+      perspective: 1100px;
+      position: relative;
+    }
+
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      min-height: 260px;
+      transform-style: preserve-3d;
+      transition: transform 0.65s ease;
+    }
+
+    .flip-card:hover .flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card.is-flipped .flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 1.2rem;
+      overflow: hidden;
+      backface-visibility: hidden;
+      background:
+        linear-gradient(135deg, rgba(15,23,42,0.9), rgba(15,23,42,0.55)),
+        radial-gradient(circle at top, rgba(148, 163, 184, 0.26), transparent 60%);
+      border: 1px solid rgba(148, 163, 184, 0.75);
+      box-shadow:
+        0 22px 45px rgba(15, 23, 42, 0.95),
+        0 0 24px rgba(56, 189, 248, 0.45),
+        0 0 32px rgba(168, 85, 247, 0.45),
+        inset 0 0 18px rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(18px) saturate(140%);
+      padding: 1.2rem 1.3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      position: relative;
+    }
+
+    .flip-face::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.12), transparent 40%),
+        radial-gradient(circle at 0% 0%, rgba(255,255,255,0.18), transparent 55%);
+      opacity: 0.9;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .flip-face > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .flip-back {
+      transform: rotateY(180deg);
+    }
+
+    .flip-face.windows-front {
+      background:
+        linear-gradient(145deg, rgba(253, 224, 71, 0.28), rgba(59, 130, 246, 0.46)),
+        radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(3,7,18,0.9));
+      border-color: rgba(250, 204, 21, 0.9);
+      box-shadow:
+        0 24px 55px rgba(15, 23, 42, 0.95),
+        0 0 30px rgba(250, 204, 21, 0.6),
+        0 0 38px rgba(56, 189, 248, 0.55);
+    }
+
+    .windows-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(120deg, #38bdf8, #6366f1, #f97316);
+      padding: 0.3rem 0.7rem;
+      border-radius: 0.7rem 0.7rem 0 0;
+      margin: -1.2rem -1.3rem 0.8rem -1.3rem;
+      color: #f9fafb;
+      font-size: 0.85rem;
+      text-shadow: 1px 1px 0 #000;
+      box-shadow:
+        0 0 18px rgba(56,189,248,0.9),
+        0 0 26px rgba(99,102,241,0.8);
+      border-bottom: 1px solid rgba(15,23,42,0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .windows-title-bar::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 0%, rgba(255,255,255,0.4), transparent 50%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .windows-buttons {
+      display: flex;
+      gap: 0.25rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .windows-btn {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(15,23,42,0.9);
+      background: radial-gradient(circle at 30% 0%, #ffffff, #e5e7eb 55%, #9ca3af);
+      box-shadow:
+        0 1px 2px rgba(15,23,42,0.8),
+        inset 0 0 2px rgba(255,255,255,0.7);
+    }
+
+    .windows-icon {
+      margin-right: 0.45rem;
+      font-size: 1.2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .windows-body {
+      font-size: 0.96rem;
+    }
+
+    .windows-body p + p {
+      margin-top: 0.45rem;
+    }
+
+    .windows-warning-footer {
+      margin-top: 0.9rem;
+      padding: 0.6rem 0.7rem;
+      border-radius: 0.6rem;
+      background: rgba(15, 23, 42, 0.85);
+      font-size: 0.88rem;
+      border: 1px dashed rgba(250, 204, 21, 0.9);
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.5);
+    }
+
+    .mini-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text-main);
+    }
+
+    .windows-back-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--accent-lime);
+    }
+
+    .windows-back-list {
+      padding-left: 1.1rem;
+      font-size: 0.96rem;
+      list-style: disc;
+    }
+
+    /* BOTÓN DESCARGAR PDF */
+
+    .download-wrapper {
+      margin-top: 1.8rem;
+      text-align: center;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.8);
+      background: radial-gradient(circle at top, #0f172a, #082f49);
+      color: var(--text-main);
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      cursor: none;
+      box-shadow: 0 0 22px rgba(56, 189, 248, 0.7);
+    }
+
+    .btn-download span.icon {
+      font-size: 1rem;
+    }
+
+    .btn-download:hover {
+      background: radial-gradient(circle at top, #082f49, #0f172a);
+      transform: translateY(-1px);
+    }
+
+    .btn-download:active {
+      transform: translateY(0);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }
+
+    .download-hint {
+      margin-top: 0.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .footer-message {
+      margin-top: 2rem;
+      padding: 1.1rem 1.2rem;
+      border-radius: var(--radius-xl);
+      font-size: 1rem;
+      color: var(--text-main);
+    }
+
+    .footer-message strong {
+      color: var(--accent-strong);
+    }
+
+    .footer-sign {
+      margin-top: 1.1rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .footer-sign span {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 0.82rem;
+      color: var(--accent-pink);
+    }
+
+    /* CURSOR PIXEL (flecha + mano estilo retro) */
+
+    .cursor-glitch {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 32px;
+      height: 32px;
+      pointer-events: none;
+      transform: translate3d(-999px, -999px, 0);
+      z-index: 999;
+      mix-blend-mode: normal;
+    }
+
+    .cursor-arrow,
+    .cursor-hand {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #f97316, #ec4899, #6366f1);
+      box-shadow:
+        2px 2px 0 #000,
+        -2px -2px 0 #000,
+        0 0 12px rgba(236, 72, 153, 0.9),
+        0 0 18px rgba(96, 165, 250, 0.9);
+    }
+
+    /* Flecha pixel (triángulo escalonado) */
+    .cursor-arrow {
+      clip-path: polygon(
+        0 0,
+        55% 0,
+        55% 20%,
+        80% 20%,
+        80% 35%,
+        55% 35%,
+        55% 55%,
+        40% 55%,
+        40% 80%,
+        25% 80%,
+        25% 55%,
+        0 55%
+      );
+    }
+
+    /* Mano pixel (estilo puntero) */
+    .cursor-hand {
+      clip-path: polygon(
+        20% 10%,
+        35% 10%,
+        35% 40%,
+        40% 40%,
+        40% 5%,
+        55% 5%,
+        55% 40%,
+        60% 40%,
+        60% 15%,
+        75% 15%,
+        75% 55%,
+        80% 55%,
+        80% 70%,
+        65% 70%,
+        65% 85%,
+        45% 85%,
+        45% 70%,
+        30% 70%,
+        30% 45%,
+        20% 45%
+      );
+      opacity: 0;
+      transition: opacity 0.08s ease;
+    }
+
+    body.cursor-hand-active .cursor-arrow {
+      opacity: 0;
+    }
+
+    body.cursor-hand-active .cursor-hand {
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        cursor: auto;
+      }
+      .cursor-glitch {
+        display: none;
+      }
+    }
+
+    /* TOASTS */
+
+    .toast-container {
+      position: fixed;
+      right: 1.4rem;
+      bottom: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      z-index: 900;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: radial-gradient(circle at top left, #111827, #020617 70%);
+      border-radius: 0.9rem;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      padding: 0.7rem 0.9rem;
+      font-size: 0.94rem;
+      color: var(--text-main);
+      box-shadow:
+        0 0 18px rgba(56, 189, 248, 0.7),
+        0 0 28px rgba(168, 85, 247, 0.5);
+      max-width: 260px;
+      animation: toastIn 0.25s ease-out;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translate3d(40px, 10px, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    /* TEXTO RESALTADO */
+
+    .highlighted {
+      background: rgba(250, 250, 110, 0.24);
+      border-radius: 0.2rem;
+      box-shadow: 0 0 12px rgba(250, 250, 110, 0.5);
+    }
+
+    /* BARRA LATERAL DE HERRAMIENTAS */
+
+    .tool-sidebar {
+      position: fixed;
+      right: 0.6rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      z-index: 901;
+    }
+
+    .tool-panel {
+      background: rgba(15, 23, 42, 0.93);
+      border-radius: 1rem;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      box-shadow:
+        0 0 16px rgba(56, 189, 248, 0.7),
+        0 0 26px rgba(168, 85, 247, 0.6);
+      padding: 0.4rem 0.35rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+    }
+
+    .tool-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #020617, #020617 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: var(--accent);
+      cursor: none;
+      box-shadow: 0 0 10px rgba(15, 23, 42, 0.9);
+    }
+
+    .tool-btn span {
+      text-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+    }
+
+    .tool-btn.active {
+      border-color: var(--accent-pink);
+      box-shadow:
+        0 0 18px rgba(244, 114, 182, 0.8),
+        0 0 26px rgba(56, 189, 248, 0.7);
+    }
+
+    @media (max-width: 768px) {
+      .tool-sidebar {
+        display: none;
+      }
+    }
+
+    /* PREVISUALIZACIÓN ZOOM TEXTO */
+
+    .zoom-preview {
+      position: fixed;
+      pointer-events: none;
+      max-width: 320px;
+      min-width: 220px;
+      padding: 0.6rem 0.7rem;
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 0.7rem;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      box-shadow:
+        0 0 18px rgba(56, 189, 248, 0.8),
+        0 0 28px rgba(168, 85, 247, 0.6);
+      font-size: 1.2rem;
+      color: var(--text-main);
+      z-index: 902;
+      transform: translate3d(-999px, -999px, 0);
+      opacity: 0;
+      transition: opacity 0.12s ease;
+    }
+
+    .zoom-preview.visible {
+      opacity: 1;
+    }
+
+    /* SCROLL TOOLS */
+
+    .scroll-tools {
+      position: fixed;
+      right: 0.6rem;
+      bottom: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      z-index: 900;
+    }
+
+    .scroll-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: radial-gradient(circle at top, #020617, #020617 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: var(--accent-lime);
+      cursor: none;
+      box-shadow: 0 0 12px rgba(15, 23, 42, 0.9);
+    }
+
+    .scroll-btn span {
+      text-shadow: 0 0 8px rgba(56, 189, 248, 0.9);
+    }
+
+    @media (max-width: 768px) {
+      .scroll-tools {
+        display: none;
+      }
+    }
+
+    /* MODO IMPRESIÓN: SOLO PROCEDIMIENTO (PASOS 1-13) */
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        cursor: auto !important;
+      }
+
+      body * {
+        visibility: hidden;
+        text-shadow: none !important;
+        box-shadow: none !important;
+        background: none !important;
+      }
+
+      #procedimiento,
+      #procedimiento * {
+        visibility: visible;
+      }
+
+      #procedimiento {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 1.5rem 1.2rem 2rem !important;
+      }
+
+      a {
+        color: #000000 !important;
+        text-decoration: none !important;
+      }
+    }
+
+    a, button, summary, .scroll-btn, .tool-btn {
+      cursor: none;
+    }
+  
+/* FIX DEFINITIVO FLIP CARDS */
+.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.3rem;
+  align-items: stretch;
+}
+.flip-card {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  perspective: 1200px;
+  overflow: visible;
+}
+.flip-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+.flip-card:hover .flip-inner {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 1.2rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+</style>
+</head>
+<body>
+  <!-- CURSOR PERSONALIZADO PIXEL FLECHA + MANO -->
+  <div class="cursor-glitch">
+    <div class="cursor-arrow"></div>
+    <div class="cursor-hand"></div>
+  </div>
+
+  <!-- NAV SUPERIOR -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <div class="nav-brand-title">Python & IA</div>
+      <div class="nav-brand-sub">Guía interactiva inicial</div>
+      <div class="nav-brand-silvana">Guía para Silvana</div>
+    </div>
+    <div class="nav-links">
+      <a href="#inicio">Inicio</a>
+      <a href="#ia-uso">IA</a>
+      <a href="#procedimiento">Procedimiento</a>
+      <a href="#confidencialidad">Confidencialidad</a>
+      <a href="#cierre">Cierre</a>
+    </div>
+  </nav>
+
+  <!-- BARRA LATERAL DE HERRAMIENTAS -->
+  <aside class="tool-sidebar">
+    <div class="tool-panel">
+      <button class="tool-btn" id="tool-zoom" title="Lupa (zoom de texto)">
+        <span>🔍</span>
+      </button>
+      <button class="tool-btn" id="tool-highlight" title="Resaltador">
+        <span>🖍</span>
+      </button>
+      <button class="tool-btn" id="tool-ai" title="Buscar con Google / IA">
+        <span>🤖</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- PREVISUALIZACIÓN DE ZOOM -->
+  <div class="zoom-preview" id="zoom-preview"></div>
+
+  <!-- BOTONES DE SCROLL -->
+  <div class="scroll-tools">
+    <button class="scroll-btn" id="scroll-up" title="Subir">
+      <span>▲</span>
+    </button>
+    <button class="scroll-btn" id="scroll-down" title="Bajar">
+      <span>▼</span>
+    </button>
+  </div>
+
+  <!-- TOASTS -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <main class="page">
+    <!-- HERO -->
+    <header class="hero" id="inicio">
+      <div class="hero-left hover-panel">
+        <div class="hero-badge">
+          <div class="hero-badge-dot"></div>
+          <div class="hero-badge-text">
+            Python · Inteligencia Artificial · Aprendizaje Guiado
+          </div>
+        </div>
+        <div class="for-silvana">Guía para Silvana</div>
+        <h1>
+          Empezar con <span class="script">Python + IA</span>
+        </h1>
+        <p class="hero-subtitle">
+          <em>Una introducción clara, práctica y visual para quienes están dando sus primeros pasos, combinando programación, curiosidad y ayuda de la IA.</em>
+        </p>
+        <div class="hero-highlights">
+          <div class="pill">
+            <span class="pill-dot"></span>
+            <span><strong>Aprender sin miedo</strong> al código</span>
+          </div>
+          <div class="pill">
+            <span class="pill-dot"></span>
+            <span>Uso <em>responsable</em> y ordenado</span>
+          </div>
+          <div class="pill">
+            <span class="pill-dot"></span>
+            <span><strong>IA como guía</strong>, vos al control</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="hero-right hover-panel">
+        <div class="hero-right-inner">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;">
+            <div class="hero-card-title">Idea central</div>
+            <div class="hero-card-chip">Curiosidad + práctica</div>
+          </div>
+          <div class="hero-card-body">
+            <p>
+              Lo que aprendés hoy es solo una puerta de entrada: <strong>Python e IA</strong> tienen un abanico enorme de usos posibles.
+            </p>
+            <p>
+              Tu curiosidad, tus preguntas y la forma en la que razonás cada paso son la llave que abre ese mundo.
+            </p>
+            <ul class="hero-card-list">
+              <li>Experimentar sin miedo</li>
+              <li>Hacer pruebas y equivocarse</li>
+              <li>Usar más de una IA para comparar</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </header>
+
+    <!-- IA: POSIBILIDADES Y USO -->
+    <section class="section" id="ia-uso">
+      <div class="section-header">
+        <div class="section-kicker">Concepto Clave</div>
+        <h2>Sobre las Posibilidades y el Uso de la IA</h2>
+        <p class="section-description">
+          La IA no es una única herramienta: es un conjunto de sistemas que podés combinar con tu propio criterio. Lo importante no es saberlo todo, sino aprender a preguntar bien y observar lo que pasa.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card hover-panel">
+          <div class="card-content">
+            <h3>Un abanico enorme de posibilidades</h3>
+            <p>
+              Es importante entender que esto <strong>no es lo único</strong> que se puede hacer: Python y la Inteligencia Artificial ofrecen múltiples formas de uso y un enorme abanico de herramientas, métodos y caminos posibles.
+            </p>
+            <p>
+              Lo que aprendés hoy es solo una <strong>puerta de entrada</strong>. Con cada proyecto vas descubriendo nuevas combinaciones entre código, datos, automatización y creatividad.
+            </p>
+            <p>
+              La <strong>curiosidad</strong>, el <em>razonamiento</em> y el hábito de preguntarte <strong>“¿y si pruebo esto?”</strong> son las habilidades que más te van a ayudar a expandir esas posibilidades.
+            </p>
+            <p>
+              Cada cosa que hagas —cada prueba, cada consulta, cada error y cada mejora— abre nuevas ideas y nuevas formas de resolver problemas.
+            </p>
+
+            <div class="shock-box">
+              <strong>Y acá viene algo que vas a notar en la práctica:</strong><br><br>
+              Cuando le pidas a la IA tareas más complejas —programas completos, estructuras de carpetas, análisis profundos o páginas web—  
+              <strong>vas a sentir y ver cómo “trabaja más”</strong>.<br><br>
+              Su respuesta puede tardar un poco más, no porque falle, sino porque está procesando <em>muchísima</em> información al mismo tiempo para darte algo coherente, ordenado y útil.  
+              Es la señal de que está usando más capacidad para construir una solución completa, no simplemente “tirar texto”.
+            </div>
+
+            <p class="note">
+              En resumen: cuanto más explores, preguntes y observes, mayores serán tus posibilidades de aprender, mejorar y crear herramientas reales.
+            </p>
+          </div>
+        </article>
+
+        <aside class="checklist hover-panel">
+          <div class="checklist-title">Usar más de una IA al mismo tiempo</div>
+          <ul class="checklist-list">
+            <li>Comparar respuestas entre dos IA (por ejemplo, ChatGPT y otra) te permite ver coincidencias y diferencias.</li>
+            <li>Ayuda a <strong>despejar dudas</strong>: si algo no cierra, preguntás de otra forma o en otro sistema.</li>
+            <li>Te muestra <em>distintos enfoques</em> sobre un mismo problema: no hay una sola forma correcta de programar.</li>
+            <li>Lográs explicaciones más completas combinando varias perspectivas.</li>
+          </ul>
+          <p class="note">
+            Ninguna IA tiene la verdad absoluta, pero entre varias se complementan, y eso acelera tu aprendizaje y mejora la calidad de tus proyectos.
+          </p>
+          <img src="10328661.png" alt="Decoración IA" class="checklist-illustration" />
+        </aside>
+      </div>
+    </section>
+
+    <!-- PROCEDIMIENTO PYTHON + IA -->
+    <section class="section" id="procedimiento">
+      <div class="section-header">
+        <div class="section-kicker">Paso a Paso</div>
+        <h2>Procedimiento Básico para Empezar con Python e Inteligencia Artificial</h2>
+        <p class="section-description">
+          Esta guía te muestra una forma ordenada de aprender: desde instalar las herramientas, hasta usar la IA para crear y mejorar tus propios programas.
+        </p>
+      </div>
+
+      <div class="steps">
+        <!-- Paso 1 -->
+        <details class="step" data-step="1" open>
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">1</div>
+              <div class="step-title">Instalar Python</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>
+              Python es un <strong>lenguaje de programación</strong>, es decir, una forma estructurada de decirle a la computadora exactamente qué queremos que haga.
+            </p>
+            <p>
+              Así como usamos el idioma español para hablar entre personas, las computadoras usan lenguajes como Python para interpretar órdenes.
+            </p>
+            <p>Python se caracteriza por ser:</p>
+            <ul class="step-list">
+              <li><strong>Fácil de leer</strong>, incluso para principiantes.</li>
+              <li><strong>Muy versátil</strong>: sirve para automatizar tareas, crear programas, analizar datos y trabajar con IA.</li>
+              <li><strong>Extremadamente usado</strong>, lo que facilita encontrar tutoriales, ejemplos y soluciones.</li>
+            </ul>
+            <p>
+              Instalar Python significa instalar el <strong>“idioma” con el que te vas a comunicar con tu computadora</strong>.
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 2 -->
+        <details class="step" data-step="2">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">2</div>
+              <div class="step-title">Instalar Visual Studio Code (VS Code)</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p class="tag">Editor de código futurista</p>
+            <p>
+              VS Code es el <strong>editor de código</strong> donde vamos a escribir, leer y ejecutar los programas.
+            </p>
+            <p>
+              Pensalo como un <em>“Word futurista para programar”</em>, porque permite:
+            </p>
+            <ul class="step-list">
+              <li>Colorear el código para identificar partes importantes.</li>
+              <li>Mostrar errores de forma clara y rápida.</li>
+              <li>Ejecutar programas con un clic.</li>
+              <li>Organizar carpetas y archivos del proyecto.</li>
+            </ul>
+            <p>
+              Es una herramienta profesional, pero muy amigable para quienes recién empiezan.
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 3 -->
+        <details class="step" data-step="3">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">3</div>
+              <div class="step-title">Crear un chat destinado al aprendizaje con Python e IA</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>
+              Abrí un chat en ChatGPT exclusivamente para este tema. Ese chat será tu espacio para:
+            </p>
+            <ul class="step-list">
+              <li>Preguntar sin miedo.</li>
+              <li>Aprender conceptos nuevos.</li>
+              <li>Equivocarte y corregir.</li>
+              <li>Guardar el historial de tus experimentos.</li>
+            </ul>
+            <p>
+              La constancia en un mismo chat permite mantener un <strong>hilo pedagógico continuo</strong>.
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 4 -->
+        <details class="step" data-step="4">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">4</div>
+              <div class="step-title">Configurar el chat inicial para que te enseñe bien</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>Podés copiar y pegar este texto al inicio del chat para que la IA adopte el rol correcto:</p>
+            <div class="code">
+              “Este chat lo vamos a usar para poder aprender a programar en <span class="accent">Python</span> y realizar proyectos que sean útiles para mí. Necesito que actúes como un profesor de informática y, al mismo tiempo, como un profesional de la programación en sistemas. Cada vez que ejecutemos código voy a pedirte definiciones y explicaciones paso a paso. También quiero que me sugieras mejoras, aplicaciones, páginas o comunidades que me ayuden a seguir aprendiendo y mejorando mis programas.”
+            </div>
+            <p>
+              De esta forma la IA adopta el rol adecuado desde el inicio. Cada vez que generes algo, podés pedirle que te explique para qué sirve cada parte del código.
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 5 -->
+        <details class="step" data-step="5">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">5</div>
+              <div class="step-title">Crear la estructura de carpetas donde estará el proyecto</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>
+              El orden es fundamental en programación. Tener las carpetas bien organizadas te permite ubicar rápidamente los archivos y evitar confusiones.
+            </p>
+            <p>Ejemplo (podés nombrar las carpetas como quieras):</p>
+            <div class="code">
+Proyecto_Principal<br />
+│<br />
+├── Carpeta de archivos programables<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;└── archivo_python.py<br />
+│<br />
+├── Carpeta de imágenes<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;├── Imagen_de_fondo.png<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;├── Logo_del_programa.jpg<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;└── Logo_de_inicio.gif<br />
+│<br />
+├── Carpeta de archivos plantilla<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;├── Modelo_de_oficio.doc<br />
+│&nbsp;&nbsp;&nbsp;&nbsp;└── Modelo_de_formulario.xls<br />
+│<br />
+└── Carpeta de registros<br />
+&nbsp;&nbsp;&nbsp;&nbsp;├── Lista_1.csv<br />
+&nbsp;&nbsp;&nbsp;&nbsp;└── Lista_2.xls
+            </div>
+            <p>
+              Los nombres tienen extensiones desde el punto (<code>.</code>), por ejemplo: <code>.py</code>, <code>.png</code>, <code>.pdf</code>.
+            </p>
+            <p>
+              Cuanto más crezca un proyecto, más importante será este orden.
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 6 -->
+        <details class="step" data-step="6">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">6</div>
+              <div class="step-title">Diseñar el prompt del proyecto antes de codificar</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>Antes de pedir código, explicale a la IA exactamente qué necesitás:</p>
+            <ul class="step-list">
+              <li>Qué querés crear.</li>
+              <li>Qué funciones tendrá.</li>
+              <li>Cómo están ordenadas tus carpetas.</li>
+              <li>Qué archivos existen, con su nombre y extensión.</li>
+              <li>Qué esperás que haga el programa.</li>
+            </ul>
+            <p>
+              Esto permite que la IA te genere un código <strong>ordenado, coherente y funcional</strong>.
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 7 -->
+        <details class="step" data-step="7">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">7</div>
+              <div class="step-title">Copiar y pegar el prompt completo para que la IA genere el programa</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>
+              Cuando ya tengas el diseño del prompt, lo copiás en el mismo chat y le decís:
+            </p>
+            <div class="code">
+              “Ahora generá el programa en Python con esto.”
+            </div>
+            <p>
+              La IA te devolverá un código listo para usar.
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 8 -->
+        <details class="step" data-step="8">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">8</div>
+              <div class="step-title">Copiar ese código y pegarlo en el archivo <code>.py</code></div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>
+              Ese archivo debe estar dentro de la carpeta correspondiente que vos definiste (ver estructura de carpetas del paso 5).
+            </p>
+            <p>
+              VS Code lo va a reconocer automáticamente y te permitirá ejecutarlo.
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 9 -->
+        <details class="step" data-step="9">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">9</div>
+              <div class="step-title">Consultar a la IA si el código necesita librerías adicionales</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>
+              Algunos programas requieren <strong>librerías extra</strong> (pequeños complementos de Python).
+            </p>
+            <p>Ejemplo clásico:</p>
+            <p>
+              Si el programa debe modificar un archivo Word sin alterar su formato, necesitás instalar:
+            </p>
+            <div class="code">
+              pip install python-docx
+            </div>
+            <p>
+              El comando <code>pip install</code> es siempre igual. Solo cambia el nombre de la librería.
+            </p>
+            <p>
+              Se ejecuta desde el <strong>“símbolo del sistema” (cmd)</strong>, que es una ventana de color negro para realizar acciones avanzadas.
+            </p>
+            <ul class="step-list">
+              <li>Podés escribir <code>cmd</code> en el buscador de Windows y abrirlo.</li>
+              <li>O usar las teclas <strong>Windows + R</strong>, escribir <code>cmd</code> y presionar Aceptar.</li>
+            </ul>
+          </div>
+        </details>
+
+        <!-- Paso 10 -->
+        <details class="step" data-step="10">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">10</div>
+              <div class="step-title">Instalar las librerías necesarias y ejecutar el código por primera vez</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>
+              Una vez instaladas las librerías necesarias, probá el programa desde VS Code.
+            </p>
+            <p>
+              Si algo falla, no es un fracaso: es parte natural del proceso. <em>Así aprendemos todos los que programamos.</em>
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 11 -->
+        <details class="step" data-step="11">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">11</div>
+              <div class="step-title">Revisar, pulir y mejorar el código</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>
+              Probás el programa y, si le falta algo o hace algo incorrecto, volvés al chat y lo ajustás.
+            </p>
+            <p>
+              Este ida y vuelta es normal y forma parte del aprendizaje. <strong>Ningún programa nace perfecto:</strong> se construye por etapas.
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 12 -->
+        <details class="step" data-step="12">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">12</div>
+              <div class="step-title">Modificar el archivo <code>.py</code> cuando recibas un código nuevo</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>
+              Simplemente borrás el código anterior, pegás el nuevo y volvés a probar.
+            </p>
+            <p>Con la práctica vas a desarrollar:</p>
+            <ul class="step-list">
+              <li><strong>Ingenio</strong>.</li>
+              <li><strong>Creatividad</strong>.</li>
+              <li><strong>Capacidad para solucionar problemas</strong>.</li>
+              <li>Mejor comprensión de cómo funciona un programa completo.</li>
+            </ul>
+            <p>
+              La IA puede generar cualquier tipo de código, pero <strong>vos sos quien le da la estructura y la claridad</strong>.
+            </p>
+          </div>
+        </details>
+
+        <!-- Paso 13 -->
+        <details class="step" data-step="13">
+          <summary class="step-header">
+            <div class="step-title-wrap">
+              <div class="step-number">13</div>
+              <div class="step-title">La programación requiere ingenio, organización e informática básica</div>
+            </div>
+            <div class="step-toggle">▶</div>
+          </summary>
+          <div class="step-body">
+            <p>
+              Si querés crear herramientas para oficina, automatizar tareas o procesar documentos, la combinación de <strong>Python + ofimática</strong> te permite hacer cosas increíbles.
+            </p>
+            <p>
+              La clave está en <em>cómo pensás el programa</em> y cómo le explicás tu idea a la IA.
+            </p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- CONFIDENCIALIDAD + COSAS ÚTILES (CARD FLIP) -->
+    <section class="section" id="confidencialidad">
+      <div class="two-cols">
+        <!-- CARD 1: CONFIDENCIALIDAD -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <!-- Frente -->
+            <div class="flip-face windows-front">
+              <div class="windows-title-bar">
+                <div><span class="windows-icon">⚠️</span>Advertencia de Confidencialidad</div>
+                <div class="windows-buttons">
+                  <div class="windows-btn"></div>
+                  <div class="windows-btn"></div>
+                  <div class="windows-btn"></div>
+                </div>
+              </div>
+              <div class="windows-body">
+                <div class="section-kicker" style="margin-top:0;">Confidencialidad</div>
+                <h3 class="mini-title">Recomendación sobre datos sensibles</h3>
+                <p>
+                  Primero practicá en tu computadora sin internet (modo local). Cuando hagas pruebas con scripts,
+                  <strong>nunca uses datos reales de causas</strong>.
+                </p>
+                <p>
+                  Usá datos ficticios, modelos o ejemplos inventados. Esto evita problemas legales y de confidencialidad.
+                </p>
+                <div class="windows-warning-footer">
+                  Esta ventana es solo un recordatorio visual: <strong>tu seguridad y la de los datos es prioridad</strong>.
+                </div>
+              </div>
+            </div>
+            <!-- Reverso -->
+            <div class="flip-face flip-back">
+              <div class="windows-back-title">Resumen rápido de buenas prácticas</div>
+              <ul class="windows-back-list">
+                <li>No copies ni pegues información real de causas en la IA.</li>
+                <li>Trabajá con ejemplos inventados o datos anonimizados.</li>
+                <li>Guardá los archivos reales solo en entornos seguros.</li>
+                <li>Si dudás, tratá el dato como confidencial.</li>
+              </ul>
+              <p style="margin-top:0.8rem;font-size:0.9rem;">
+                Si seguís estas reglas simples, podés aprovechar la IA sin comprometer información sensible.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2: COSAS ÚTILES A SABER -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <!-- Frente -->
+            <div class="flip-face">
+              <h3 class="mini-title">Cosas útiles a saber</h3>
+              <p style="font-size:0.98rem;">
+                <strong>Direcciones de carpetas:</strong> cuando navegás por Windows, cada carpeta tiene una dirección (ruta)
+                que se ve en la barra superior del explorador. Esa ruta se puede copiar y pegar.
+              </p>
+              <p style="font-size:0.98rem; margin-top:0.45rem;">
+                <strong>CMD o símbolo del sistema:</strong> es una ventana donde se pueden ejecutar todo tipo de comandos.
+                En la línea superior suele mostrarse la ruta actual, por ejemplo:
+              </p>
+              <div class="code">C:\Users\TU_USUARIO&gt;</div>
+              <p style="font-size:0.98rem; margin-top:0.45rem;">
+                Todo lo que ejecutes ahí se aplicará a esa ubicación (salvo comandos que afecten al sistema completo).
+                Es una herramienta poderosa, por eso siempre conviene saber qué comando estás ejecutando.
+              </p>
+            </div>
+            <!-- Reverso -->
+            <div class="flip-face flip-back">
+              <div class="windows-back-title">Tips rápidos de sistema</div>
+              <ul class="windows-back-list">
+                <li>Con <strong>Windows + E</strong> abrís el explorador de archivos.</li>
+                <li>Con <strong>Windows + R</strong> abrís la ventana “Ejecutar” (podés escribir <code>cmd</code>).</li>
+                <li>En el explorador, hacé clic en la barra de direcciones para copiar la ruta.</li>
+                <li>Guardar rutas clave en un bloc de notas te ayuda a trabajar más rápido.</li>
+              </ul>
+              <p style="margin-top:0.8rem;font-size:0.9rem;">
+                Son detalles chicos, pero mejoran mucho tu velocidad cuando empieces a automatizar cosas con Python.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENSAJE FINAL + DESCARGA PDF -->
+    <section class="section" id="cierre">
+      <div class="download-wrapper">
+        <button class="btn-download" onclick="window.print()">
+          <span class="icon">⬇</span>
+          <span>Descargar guía en PDF</span>
+        </button>
+        <div class="download-hint">
+          Usa la opción de “Guardar como PDF” del cuadro de impresión del navegador.
+        </div>
+      </div>
+
+      <div class="footer-message hover-panel">
+        <p>
+          Empezar en programación es abrir la puerta a un mundo nuevo. Al principio puede intimidar, pero cada pequeña cosa que entiendas es un avance enorme. No importa si tardás, si te equivocás o si algo no funciona a la primera: <em>así aprendemos todos</em>.
+        </p>
+        <br />
+        <p>
+          Cada prueba, cada archivo que ordenás, cada comando que ejecutás, te acerca a crear herramientas verdaderas que facilitan tu trabajo.
+        </p>
+        <br />
+        <p>
+          <strong>Tenés toda la capacidad para aprender esto.</strong> No hace falta ser experta desde el principio: alcanza con tener ganas, curiosidad y constancia.
+        </p>
+        <br />
+        <p>
+          Cuanta más curiosidad tengas y más preguntes, mayores serán tus posibilidades de crear, aprender y avanzar. Y cuando veas que la IA tarda un poquito más, sonreí: <strong>es porque la pusiste a trabajar en serio</strong>.
+        </p>
+      </div>
+
+      <div class="footer-sign">
+        Contacto: cristhiangyt+IA@gmail.com
+        <span>Creado por el usuario Cristhian 🤠 · 2025®</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Cursor pixel estilo flecha + mano
+    const cursor = document.querySelector('.cursor-glitch');
+
+    // TOASTS
+    const toastContainer = document.getElementById('toast-container');
+    function showToast(message, duration = 4000) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translate3d(40px, 0, 0)';
+        setTimeout(() => toast.remove(), 200);
+      }, duration);
+    }
+
+    // Lógica de pasos leídos y notificaciones
+    const stepDetails = document.querySelectorAll('details.step');
+    const stepsRead = new Array(stepDetails.length).fill(false);
+    const stepOpenState = [];
+
+    stepDetails.forEach((step, index) => {
+      step.addEventListener('toggle', () => {
+        if (step.open) {
+          stepsRead[index] = true;
+          const n = index + 1;
+
+          if (n === 1) {
+            showToast('🚀 Vamos, comienza… no te desanimes. Cada clic es un paso más.');
+          }
+
+          if (n === 7 && stepsRead.slice(0, 7).every(Boolean)) {
+            showToast('💪 Ya falta poco, vamos vamos… estás llegando al final de la guía.');
+          }
+
+          if (n === 13 && stepsRead.every(Boolean)) {
+            showToast('🎉 ¡Felicitaciones por terminar de leer esta guía! Espero haberte ayudado a comprender un poco más.');
+          }
+        }
+      });
+    });
+
+    // Abrir todos los pasos (1-13) antes de imprimir y restaurar luego
+    function openAllStepsForPrint() {
+      stepDetails.forEach((step, index) => {
+        stepOpenState[index] = step.open;
+        step.open = true;
+      });
+    }
+
+    function restoreStepsAfterPrint() {
+      stepDetails.forEach((step, index) => {
+        if (typeof stepOpenState[index] !== 'undefined') {
+          step.open = stepOpenState[index];
+        }
+      });
+    }
+
+    if ('onbeforeprint' in window) {
+      window.addEventListener('beforeprint', openAllStepsForPrint);
+      window.addEventListener('afterprint', restoreStepsAfterPrint);
+    } else {
+      const mediaQueryList = window.matchMedia('print');
+      mediaQueryList.addListener((mql) => {
+        if (mql.matches) {
+          openAllStepsForPrint();
+        } else {
+          restoreStepsAfterPrint();
+        }
+      });
+    }
+
+    // Herramientas laterales
+    const zoomBtn = document.getElementById('tool-zoom');
+    const highlightBtn = document.getElementById('tool-highlight');
+    const aiBtn = document.getElementById('tool-ai');
+    const zoomBox = document.getElementById('zoom-preview');
+
+    let zoomActive = false;
+    let highlightActive = false;
+
+    zoomBtn.addEventListener('click', () => {
+      zoomActive = !zoomActive;
+      zoomBtn.classList.toggle('active', zoomActive);
+      if (!zoomActive && zoomBox) {
+        zoomBox.classList.remove('visible');
+        zoomBox.style.transform = 'translate3d(-999px, -999px, 0)';
+      }
+    });
+
+    highlightBtn.addEventListener('click', () => {
+      highlightActive = !highlightActive;
+      highlightBtn.classList.toggle('active', highlightActive);
+    });
+
+    aiBtn.addEventListener('click', () => {
+      const query = prompt('Escribí lo que quieras buscar con Google / IA:');
+      if (!query) return;
+      const url = 'https://www.google.com/search?q=' + encodeURIComponent(query + ' google ai');
+      window.open(url, '_blank');
+    });
+
+    // Resaltador
+    document.addEventListener('click', (e) => {
+      if (!highlightActive) return;
+      const target = e.target;
+      if (target.matches('p, li')) {
+        target.classList.toggle('highlighted');
+        e.preventDefault();
+      }
+    }, true);
+
+    // Controles de scroll
+    const scrollUp = document.getElementById('scroll-up');
+    const scrollDown = document.getElementById('scroll-down');
+
+    scrollUp.addEventListener('click', () => {
+      window.scrollBy({
+        top: -window.innerHeight * 0.8,
+        behavior: 'smooth'
+      });
+    });
+
+    scrollDown.addEventListener('click', () => {
+      window.scrollBy({
+        top: window.innerHeight * 0.8,
+        behavior: 'smooth'
+      });
+    });
+
+    // Flip card por click (móvil / también funciona en escritorio)
+    const flipCards = document.querySelectorAll('.flip-card');
+    flipCards.forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.toggle('is-flipped');
+      });
+    });
+
+    // Cursor + Lupa (zoom de texto que aparece solo sobre texto)
+    const zoomTargetsSelector = 'p, li, h1, h2, h3, .mini-title, .section-description';
+
+    document.addEventListener('mousemove', (e) => {
+      // mover cursor personalizado
+      if (cursor) {
+        cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      }
+
+      if (!zoomBox) return;
+
+      // si la lupa no está activa, ocultar y salir
+      if (!zoomActive) {
+        zoomBox.classList.remove('visible');
+        zoomBox.style.transform = 'translate3d(-999px, -999px, 0)';
+        return;
+      }
+
+      const target = e.target.closest(zoomTargetsSelector);
+
+      if (target) {
+        const text = target.textContent.trim();
+        if (text.length > 0) {
+          zoomBox.textContent = text;
+          zoomBox.classList.add('visible');
+          const offsetX = 20;
+          const offsetY = -20;
+          zoomBox.style.transform = `translate3d(${e.clientX + offsetX}px, ${e.clientY + offsetY}px, 0)`;
+          return;
+        }
+      }
+
+      // Si no hay texto válido debajo del cursor, ocultar la lupa
+      zoomBox.classList.remove('visible');
+      zoomBox.style.transform = 'translate3d(-999px, -999px, 0)';
+    });
+
+    // Cambiar a mano pixel cuando se pasa sobre cosas clickeables
+    const handSelectors = 'a, button, summary, .tool-btn, .scroll-btn, .step-header';
+
+    document.addEventListener('mouseover', (e) => {
+      const isClickable = e.target.closest(handSelectors);
+      if (isClickable) {
+        document.body.classList.add('cursor-hand-active');
+      } else {
+        document.body.classList.remove('cursor-hand-active');
+      }
+    });
+  </script>
+</body>
+</html>
